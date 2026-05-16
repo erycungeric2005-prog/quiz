@@ -1,0 +1,159 @@
+import React, { useEffect, useState } from "react";
+
+export default function FlowerQuestionApp() {
+  const questions = {
+    start: {
+      text: "Am o propunere foarte tentantă. Doriți să o auziți? 💐",
+      options: [
+        { text: "Da", next: "trip" },
+        { text: "Nu", next: "proposal" },
+      ],
+    },
+
+    proposal: {
+      text: "Haideți măcar să auziți propunerea 🌸",
+      options: [
+        { text: "Da", next: "trip" },
+        { text: "Nu", next: "please" },
+      ],
+    },
+
+    please: {
+      text: "Hai, te rog 🥺",
+      options: [
+        { text: "Bine, spune", next: "trip" },
+        { text: "Bine, spune", next: "trip" },
+      ],
+    },
+
+    trip: {
+      text: "Doriți să facem o mică excursie? 🌺",
+      options: [
+        { text: "Da", next: "final" },
+        { text: "Nu", next: "thinkAgain" },
+      ],
+    },
+
+    thinkAgain: {
+      text: "Haideți să ne mai gândim o dată. Chiar nu vreți? 🌷",
+      options: [
+        { text: "Ba da", next: "final" },
+        { text: "Ba da, vreau", next: "final" },
+      ],
+    },
+
+    final: {
+      text:
+        "Perfect! Ați ajuns la final 🎉\nTrimiteți o captură de ecran lui Eric pentru mai multe detalii.",
+      options: [],
+    },
+  };
+
+  const [current, setCurrent] = useState("start");
+  const [confetti, setConfetti] = useState([]);
+
+  const currentQuestion = questions[current];
+
+  useEffect(() => {
+    if (current === "final") {
+      const items = Array.from({ length: 40 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 2,
+        duration: 3 + Math.random() * 3,
+        emoji: Math.random() > 0.5 ? "🌸" : "🎉",
+      }));
+
+      setConfetti(items);
+    }
+  }, [current]);
+
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center overflow-hidden relative p-6"
+      style={{
+        background: "linear-gradient(to bottom, #fff5f7, #ffe4ec)",
+      }}
+    >
+      {current === "final" &&
+        confetti.map((item) => (
+          <div
+            key={item.id}
+            className="absolute text-3xl"
+            style={{
+              left: `${item.left}%`,
+              top: "-10%",
+              animation: `fall ${item.duration}s linear infinite`,
+              animationDelay: `${item.delay}s`,
+            }}
+          >
+            {item.emoji}
+          </div>
+        ))}
+
+      <style>{`
+        @keyframes fall {
+          0% {
+            transform: translateY(-10vh) rotate(0deg);
+            opacity: 1;
+          }
+
+          100% {
+            transform: translateY(110vh) rotate(360deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
+
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute left-0 top-0 h-full w-72 bg-cover bg-center opacity-90"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?q=80&w=1000&auto=format&fit=crop')",
+            clipPath: "polygon(0 0, 100% 0, 70% 100%, 0% 100%)",
+          }}
+        />
+
+        <div
+          className="absolute right-0 top-0 h-full w-72 bg-cover bg-center opacity-90"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=1000&auto=format&fit=crop')",
+            clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0% 100%)",
+          }}
+        />
+      </div>
+
+      <div className="bg-white/85 backdrop-blur-md rounded-3xl shadow-2xl p-8 max-w-2xl w-full text-center border-4 border-pink-200 relative z-10">
+        <h1 className="text-3xl font-bold text-pink-700 mb-8 whitespace-pre-line leading-relaxed">
+          {currentQuestion.text}
+        </h1>
+
+        <div className="flex flex-col gap-4">
+          {currentQuestion.options.length > 0 ? (
+            currentQuestion.options.map((option, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrent(option.next)}
+                className="bg-pink-500 hover:bg-pink-600 transition-all duration-300 text-white py-4 rounded-2xl text-lg font-semibold shadow-md hover:scale-105"
+              >
+                {option.text}
+              </button>
+            ))
+          ) : (
+            <button
+              onClick={() => {
+                setCurrent("start");
+                setConfetti([]);
+              }}
+              className="bg-green-500 hover:bg-green-600 transition-all duration-300 text-white py-4 rounded-2xl text-lg font-semibold shadow-md hover:scale-105"
+            >
+              Reia jocul 🌼
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
